@@ -11,9 +11,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    env:
-      ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 300
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -35,19 +32,27 @@ jobs:
       - name: Run Android emulator + tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
+          api-level: 33
           target: google_apis
           arch: x86_64
           profile: pixel_3
           force-avd-creation: true
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot -wipe-data
+          emulator-options: >
+            -no-window
+            -gpu swiftshader_indirect
+            -noaudio
+            -no-boot-anim
+            -no-snapshot
+            -wipe-data
           disable-animations: true
+
           script: |
             adb devices
 
-            echo "Waiting for emulator boot..."
+            echo "Waiting for Android system boot..."
 
-            for i in $(seq 1 60); do
+            # Wait for boot completion
+            for i in $(seq 1 80); do
               boot=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
               if [ "$boot" = "1" ]; then
                 break
@@ -55,11 +60,21 @@ jobs:
               sleep 5
             done
 
-            echo "Emulator ready"
+            echo "Boot complete"
 
+            # IMPORTANT FIX: wait for system services (prevents 'input service' crash)
+            sleep 30
+
+            echo "System services should now be ready"
+
+            # Safe optional unlock (won't break build if input service is slow)
+            adb shell input keyevent 82 || true
+
+            # Start Appium
             npx appium --log-level error &
             sleep 10
 
+            # Run WebdriverIO tests
             npx wdio run ./wdio.conf.js --spec test/specs/signup.test.js
 
             npx wdio run ./wdio.conf.js --spec test/specs/golf.test.js
