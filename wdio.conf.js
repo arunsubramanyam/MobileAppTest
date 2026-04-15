@@ -65,12 +65,10 @@ export const config = {
     //
     capabilities: [{
         platformName: 'Android',
-        'appium:deviceName': 'Google Pixel 7',
-        'appium:platformVersion': '13.0',
+        'appium:deviceName': 'Google Pixel 6',
+        'appium:platformVersion': '12.0',
         'appium:automationName': 'UiAutomator2',
         'appium:app': 'bs://b338bdefbe053ab766d251b3669ff9713d747c06',
-        'appium:appPackage': 'com.golfloverz.app',
-        'appium:appActivity': '.MainActivity',
         'appium:noReset': false,
         'appium:uiautomator2ServerLaunchTimeout': 120000,
         'appium:chromeDriverArguments': ['--disable-fpe', '--no-sandbox', '--disable-dev-shm-usage'],
