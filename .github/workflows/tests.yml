@@ -12,20 +12,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      - uses: actions/setup-node@v6
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
         with:
           node-version: 24
 
-      - run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Start emulator + run tests
+      - name: Run Android emulator + tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 33
@@ -36,22 +40,27 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
+            set -e
+
             adb devices
 
             echo "Waiting for emulator boot..."
 
-            # IMPORTANT: robust boot check (no fragile syntax)
-            boot_completed="0"
-            while [ "$boot_completed" != "1" ]; do
-              boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+            # SAFE boot check (no bash loops, no broken "done" issues)
+            for i in $(seq 1 60); do
+              boot=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+              if [ "$boot" = "1" ]; then
+                break
+              fi
               sleep 5
             done
 
             echo "Emulator ready"
 
+            # Start Appium server
             npx appium --log-level error &
-            sleep 8
+            sleep 10
 
+            # Run WebdriverIO tests
             npx wdio run ./wdio.conf.js --spec test/specs/signup.test.js
-
             npx wdio run ./wdio.conf.js --spec test/specs/golf.test.js
