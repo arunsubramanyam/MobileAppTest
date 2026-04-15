@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Enable KVM group perms
         run: |
@@ -29,9 +29,9 @@ jobs:
           distribution: 'temurin'   # ✅ required field (was missing)
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 18
+          node-version: 24
 
       - name: Install dependencies
         run: npm ci
@@ -40,7 +40,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
 
       - name: AVD cache
-        uses: actions/cache@v4   # ⚠️ v5 doesn’t exist yet (use v4)
+        uses: actions/cache@v5   # ⚠️ v5 doesn’t exist yet (use v4)
         id: avd-cache
         with:
           path: |
