@@ -2,8 +2,8 @@
   "android": {
     "appium:deviceName": "Google Pixel 6",
     "appium:automationName": "UiAutomator2",
-    "appium:appPackage": "com.golfloverz.app",
-    "appium:appActivity": ".MainActivity",
+    "appium:appPackage": "com.google.android.contacts",
+    "appium:appActivity": ".activities.PeopleActivity",
     "appium:noReset": true
   }
 }
