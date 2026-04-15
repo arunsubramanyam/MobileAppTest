@@ -68,6 +68,8 @@ export const config = {
 
     'appium:automationName': 'UiAutomator2',
 
+    'app': 'preinstalled.app',
+
 
     'bstack:options': {
         deviceName: 'Google Pixel 6',
