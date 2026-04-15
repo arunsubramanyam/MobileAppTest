@@ -68,14 +68,15 @@ export const config = {
         'appium:deviceName': 'Google Pixel 6',
         'appium:platformVersion': '12.0',
         'appium:automationName': 'UiAutomator2',
-        'appium:app': 'bs://b338bdefbe053ab766d251b3669ff9713d747c06',
+        'appium:appPackage': 'com.google.android.contacts',
+        'appium:appActivity': '.activities.PeopleActivity',
         'appium:noReset': false,
         'appium:uiautomator2ServerLaunchTimeout': 120000,
         'appium:chromeDriverArguments': ['--disable-fpe', '--no-sandbox', '--disable-dev-shm-usage'],
         'bstack:options': {
-            projectName: 'Mobile App Automation',
-            buildName: 'WDIO BrowserStack Build',
-            sessionName: 'Signup + Golf Tests',
+            projectName: 'System App Automation',
+            buildName: 'Contacts app tests',
+            sessionName: 'Contacts',
             debug: true,
             networkLogs: true
             }
