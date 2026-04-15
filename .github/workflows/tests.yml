@@ -1,14 +1,15 @@
 name: Mobile App Tests
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true
+
+
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
-
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true
 
 jobs:
   test:
