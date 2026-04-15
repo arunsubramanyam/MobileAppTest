@@ -1,0 +1,14 @@
+{
+  "mcp": {
+    "appium-mcp": {
+      "enabled": true,
+      "timeout": 15000,
+      "type": "local",
+      "command": ["npx", "-y", "appium-mcp"],
+      "environment": {
+        "ANDROID_HOME": "${ANDROID_HOME}",
+        "CAPABILITIES_CONFIG": "./capabilities.json"
+      }
+    }
+  }
+}

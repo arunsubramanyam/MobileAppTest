@@ -1,0 +1,5 @@
+appId: com.golfloverz.app
+---
+- launchApp
+- waitForAnimationToEnd
+- wait: 1000

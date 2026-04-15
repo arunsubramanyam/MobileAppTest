@@ -1,0 +1,4 @@
+appId: com.golfloverz.app
+---
+- launchApp
+- waitForAnimationToEnd

@@ -1,0 +1,9 @@
+{
+  "android": {
+    "appium:app": "com.golfloverz.app",
+    "appium:deviceName": "Android Device",
+    "appium:platformVersion": "16.0",
+    "appium:automationName": "UiAutomator2",
+    "appium:udid": "Medium Phone API 36.1:5554"
+  }
+}
