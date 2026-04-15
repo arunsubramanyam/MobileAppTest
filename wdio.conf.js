@@ -45,6 +45,19 @@ export const config = {
     // from the same test should run tests.
     //
     maxInstances: 1,
+
+    //
+    // ====================
+    // BrowserStack Credentials
+    // ====================
+    user: process.env.BROWSERSTACK_USERNAME,
+    key: process.env.BROWSERSTACK_ACCESS_KEY,
+
+    hostname: 'hub.browserstack.com',
+    port: 443,
+    protocol: 'https',
+    path: '/wd/hub',
+
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
@@ -52,15 +65,22 @@ export const config = {
     //
     capabilities: [{
         platformName: 'Android',
-        'appium:deviceName': 'emulator-5554',
-        'appium:platformVersion': '16',
+        'appium:deviceName': 'Google Pixel 7',
+        'appium:platformVersion': '13',
         'appium:automationName': 'UiAutomator2',
-        'appium:app': './golfloverz_splits/base.apk',
+        'appium:app': 'bs://b338bdefbe053ab766d251b3669ff9713d747c06',
         'appium:appPackage': 'com.golfloverz.app',
         'appium:appActivity': '.MainActivity',
         'appium:noReset': false,
         'appium:uiautomator2ServerLaunchTimeout': 120000,
-        'appium:chromeDriverArguments': ['--disable-fpe', '--no-sandbox', '--disable-dev-shm-usage']
+        'appium:chromeDriverArguments': ['--disable-fpe', '--no-sandbox', '--disable-dev-shm-usage'],
+        'bstack:options': {
+            projectName: 'Mobile App Automation',
+            buildName: 'WDIO BrowserStack Build',
+            sessionName: 'Signup + Golf Tests',
+            debug: true,
+            networkLogs: true
+            }
     }],
 
     //
@@ -111,12 +131,11 @@ export const config = {
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
     services: [
-        ['appium', {
-            args: {
-                relaxedSecurity: true,
-                allowCors: true
-            }
-        }]
+                [
+                    ['browserstack', {
+                        browserstackLocal: false
+                    }]
+                ]
         , 'visual'
     ],
 
