@@ -1,9 +1,5 @@
 name: Mobile App Tests
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true
-
-
 on:
   push:
     branches: [ main ]
@@ -30,7 +26,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'temurin'   # ✅ required field (was missing)
+          distribution: 'temurin'
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -44,7 +40,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
 
       - name: AVD cache
-        uses: actions/cache@v5   # ⚠️ v5 doesn’t exist yet (use v4)
+        uses: actions/cache@v5
         id: avd-cache
         with:
           path: |
