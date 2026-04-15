@@ -11,6 +11,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+      ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 300
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -35,18 +38,15 @@ jobs:
           api-level: 33
           target: google_apis
           arch: x86_64
-          profile: Nexus 6
+          profile: pixel_3
           force-avd-creation: true
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot
           disable-animations: true
           script: |
-            set -e
-
             adb devices
 
             echo "Waiting for emulator boot..."
 
-            # SAFE boot check (no bash loops, no broken "done" issues)
             for i in $(seq 1 60); do
               boot=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
               if [ "$boot" = "1" ]; then
@@ -57,10 +57,9 @@ jobs:
 
             echo "Emulator ready"
 
-            # Start Appium server
             npx appium --log-level error &
             sleep 10
 
-            # Run WebdriverIO tests
             npx wdio run ./wdio.conf.js --spec test/specs/signup.test.js
+
             npx wdio run ./wdio.conf.js --spec test/specs/golf.test.js
