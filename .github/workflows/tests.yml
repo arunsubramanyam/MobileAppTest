@@ -51,14 +51,9 @@ jobs:
 
             echo "Waiting for Android system boot..."
 
-            # Wait for boot completion
-            for i in $(seq 1 80); do
-              boot=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
-              if [ "$boot" = "1" ]; then
-                break
-              fi
-              sleep 5
-            done
+            adb wait-for-device
+
+            timeout 400 adb shell 'while [ "$(getprop sys.boot_completed)" != "1" ]; do sleep 5; done'
 
             echo "Boot complete"
 
