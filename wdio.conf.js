@@ -68,13 +68,13 @@ export const config = {
 
     'appium:automationName': 'UiAutomator2',
 
-    'app': 'preinstalled.app',
+    
 
 
     'bstack:options': {
         deviceName: 'Google Pixel 6',
         osVersion: '12.0',
-
+        'app': 'preinstalled.app',
         projectName: 'System App Automation',
         buildName: 'Contacts app tests',
         sessionName: 'Contacts',
