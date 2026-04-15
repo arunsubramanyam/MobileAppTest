@@ -74,6 +74,8 @@ export const config = {
         'appium:uiautomator2ServerLaunchTimeout': 120000,
         'appium:chromeDriverArguments': ['--disable-fpe', '--no-sandbox', '--disable-dev-shm-usage'],
         'bstack:options': {
+            deviceName: 'Google Pixel 6',
+            osVersion: '12.0',
             projectName: 'System App Automation',
             buildName: 'Contacts app tests',
             sessionName: 'Contacts',
