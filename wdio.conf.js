@@ -1,3 +1,5 @@
+import { system } from "appium/support";
+
 export const config = {
     //
     // ====================
@@ -74,10 +76,10 @@ export const config = {
     'bstack:options': {
         deviceName: 'Google Pixel 6',
         osVersion: '12.0',
+        realMobile: 'true',
         projectName: 'System App Automation',
         buildName: 'Contacts app tests',
         sessionName: 'Contacts',
-
         debug: true,
         networkLogs: true
     },
@@ -85,8 +87,8 @@ export const config = {
 
     'appium:appPackage': 'com.google.android.contacts',
     'appium:appActivity': 'com.android.contacts.activities.PeopleActivity',
-
-    'appium:noReset': true
+    'appium:noReset': true,
+    'appium:autoGrantPermissions': true
 }],
 
     //
