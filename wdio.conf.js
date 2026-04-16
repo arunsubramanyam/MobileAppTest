@@ -71,11 +71,6 @@ export const config = {
     'appium:appWaitActivity': 'com.google.android.contacts.*',
     'appium:noReset': true,
     
-    'browserstack.permissions': {
-        'android.permission.READ_CONTACTS': 'granted',
-        'android.permission.WRITE_CONTACTS': 'granted'
-    },
-
     'bstack:options': {
         deviceName: 'Google Pixel 6',
         osVersion: '12.0',
@@ -84,7 +79,12 @@ export const config = {
         buildName: 'Contacts app tests',
         sessionName: 'Contacts',
         debug: true,
-        networkLogs: true
+        networkLogs: true,
+        permissions: {
+            'android.permission.READ_CONTACTS': 'granted',
+            'android.permission.WRITE_CONTACTS': 'granted'
+        }
+
     }
 
 
