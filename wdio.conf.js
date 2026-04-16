@@ -1,5 +1,3 @@
-import { system } from "appium/support";
-
 export const config = {
     //
     // ====================
