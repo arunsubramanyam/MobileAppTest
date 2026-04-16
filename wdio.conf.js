@@ -79,11 +79,7 @@ export const config = {
         buildName: 'Contacts app tests',
         sessionName: 'Contacts',
         debug: true,
-        networkLogs: true,
-        permissions: {
-            'android.permission.READ_CONTACTS': 'granted',
-            'android.permission.WRITE_CONTACTS': 'granted'
-        }
+        networkLogs: true
 
     }
 
