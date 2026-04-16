@@ -64,13 +64,12 @@ export const config = {
     // https://saucelabs.com/platform/platform-configurator
     //
     capabilities: [{
-      platformName: 'Android',
-
+      //platformName: 'Android',
     'appium:automationName': 'UiAutomator2',
-
-    
-
-
+    'appium:appPackage': 'com.google.android.contacts',
+    'appium:appActivity': 'com.android.contacts.activities.PeopleActivity',
+    'appium:noReset': true,
+    'appium:autoGrantPermissions': true,
     'bstack:options': {
         deviceName: 'Google Pixel 6',
         osVersion: '12.0',
@@ -80,13 +79,10 @@ export const config = {
         sessionName: 'Contacts',
         debug: true,
         networkLogs: true
-    },
+    }
 
 
-    'appium:appPackage': 'com.google.android.contacts',
-    'appium:appActivity': 'com.android.contacts.activities.PeopleActivity',
-    'appium:noReset': true,
-    'appium:autoGrantPermissions': true
+
 }],
 
     //
