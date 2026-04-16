@@ -85,7 +85,7 @@ export const config = {
 
 
     'appium:appPackage': 'com.google.android.contacts',
-    'appium:appActivity': '.activities.PeopleActivity',
+    'appium:appActivity': 'com.android.contacts.activities.PeopleActivity',
 
     'appium:noReset': true
 }],

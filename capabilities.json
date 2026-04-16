@@ -3,7 +3,7 @@
     "appium:deviceName": "Google Pixel 6",
     "appium:automationName": "UiAutomator2",
     "appium:appPackage": "com.google.android.contacts",
-    "appium:appActivity": ".activities.PeopleActivity",
+    "appium:appActivity": "com.android.contacts.activities.PeopleActivity",
     "appium:noReset": true
   }
 }
