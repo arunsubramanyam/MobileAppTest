@@ -70,6 +70,7 @@ export const config = {
     'appium:appActivity': 'com.google.android.contacts.activities.PeopleActivity',
     'appium:appWaitActivity': 'com.google.android.contacts.*',
     'appium:noReset': true,
+    'appium:app': undefined,
     
     'bstack:options': {
         deviceName: 'Google Pixel 6',
