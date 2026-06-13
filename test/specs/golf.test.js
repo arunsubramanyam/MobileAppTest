@@ -5,6 +5,7 @@ import { isLoggedIn, waitForHomeScreen, goHome } from '../pageobjects/home.page.
 import { logout } from '../pageobjects/profile.page.js'
 import loginData from '../data/login.json' with { type: 'json' }
 import regData from '../data/registration.json' with { type: 'json' }
+import { queryTable } from '../utils/supabase.js'
 
 async function findClickableAncestor(el) {
     const isClickable = await el.getAttribute('clickable').catch(() => 'false')
@@ -361,6 +362,8 @@ async function registerTournament() {
     console.log(`Tournament "${regData.tournamentName}" found in Registered Tournaments: ${tournamentFound}`)
     expect(tournamentFound).toBe(true)
 
+    await verifyRegistrationInSupabase(regData.fullName);
+
     console.log('--- Tournament Registration Flow Complete ---')
 }
 
@@ -651,6 +654,201 @@ async function verifyTipsAndTricks() {
     console.log(`\n--- Tips & Tricks Complete (${totalPlayed} videos) ---`)
 }
 
+async function verifyRegistrationInSupabase(fullName) {
+    console.log('--- Verifying registration in Supabase ---')
+    try {
+        const rows = await queryTable('tournament_registrations', {
+            full_name: fullName,
+            payment_status: 'completed'
+        })
+        const found = rows.length > 0
+        console.log(`Supabase: found ${rows.length} row(s) matching full_name="G L User 2" and payment_status="completed"`)
+        expect(found).toBe(true)
+    } catch (e) {
+        console.log('Supabase verification failed:', e.message)
+        throw e
+    }
+    console.log('--- Supabase verification complete ---')
+}
+
+async function deleteCalendarEvent(eventName) {
+    console.log('--- Deleting Calendar Event ---')
+
+    const calendarPackages = [
+        'com.google.android.calendar',
+        'com.samsung.android.app.calendar',
+        'com.android.calendar'
+    ]
+
+    let calendarLaunched = false
+    for (const pkg of calendarPackages) {
+        try {
+            await driver.executeScript('mobile: startActivity', [{
+                intent: `${pkg}/com.android.calendar.AllInOneActivity`
+            }])
+            await driver.pause(3000)
+            const currentPkg = await driver.executeScript('mobile: getCurrentPackage', [])
+            if (currentPkg === pkg) {
+                calendarLaunched = true
+                console.log(`Calendar app launched: ${currentPkg}`)
+                break
+            }
+        } catch (e) { /* try next */ }
+    }
+
+    if (!calendarLaunched) {
+        try {
+            await driver.executeScript('mobile: startActivity', [{
+                intent: 'android.intent.action.MAIN',
+                category: 'android.intent.category.APP_CALENDAR'
+            }])
+            await driver.pause(3000)
+            calendarLaunched = true
+            console.log('Calendar launched via category intent')
+        } catch (e) {
+            console.log('Could not launch calendar app:', e.message)
+            return
+        }
+    }
+
+    // Tap search
+    let searchTapped = false
+    for (const sel of [
+        `//*[@content-desc="Search"]`,
+        `//*[@content-desc="Search events"]`,
+        `android=new UiSelector().descriptionContains("Search")`,
+        `//android.widget.ImageButton[@content-desc="Search"]`,
+        `//android.widget.ImageView[@content-desc="Search"]`
+    ]) {
+        try {
+            const el = await $(sel)
+            if (await el.isDisplayed().catch(() => false)) {
+                await el.click()
+                await driver.pause(2000)
+                searchTapped = true
+                break
+            }
+        } catch (e) { /* try next */ }
+    }
+
+    if (!searchTapped) {
+        console.log('Search button not found in calendar app')
+        return
+    }
+
+    // Type event name in search
+    try {
+        const searchInput = await $('//android.widget.EditText')
+        if (await searchInput.isDisplayed().catch(() => false)) {
+            await searchInput.click()
+            await driver.pause(500)
+            await searchInput.setValue(eventName)
+            await driver.pause(2000)
+        }
+    } catch (e) {
+        console.log('Could not type in search field:', e.message)
+        return
+    }
+
+    // Press Enter on keyboard to trigger search
+    try {
+        await driver.action('key')
+            .keyDown('\uE007')
+            .keyUp('\uE007')
+            .perform()
+        await driver.pause(3000)
+        console.log('Search executed via Enter key')
+    } catch (e) {
+        console.log('Could not press Enter, trying hide keyboard:', e.message)
+        try { await driver.hideKeyboard() } catch (ke) { /* ignore */ }
+        await driver.pause(2000)
+    }
+
+    // Tap search result — exclude the EditText input itself
+    let resultTapped = false
+    for (const sel of [
+        `//*[contains(@text, "${eventName}") and not(self::android.widget.EditText)]`,
+        `//*[contains(@content-desc, "${eventName}") and not(self::android.widget.EditText)]`,
+        `android=new UiSelector().textContains("${eventName}").className("android.widget.TextView")`,
+        `(//android.view.ViewGroup[.//*[contains(@text, "${eventName}")]])[1]`,
+        `(//*[@clickable="true" and contains(@text, "${eventName}")])[1]`
+    ]) {
+        try {
+            const el = await $(sel)
+            if (await el.isDisplayed().catch(() => false)) {
+                await el.click()
+                await driver.pause(2000)
+                resultTapped = true
+                console.log('Search result tapped')
+                break
+            }
+        } catch (e) { /* try next */ }
+    }
+
+    if (!resultTapped) {
+        console.log(`Search result not found for: ${eventName}`)
+        await startActivity()
+        await driver.pause(3000)
+        return
+    }
+
+    // Tap overflow menu then Delete, or Delete directly
+    for (const sel of [
+        `//*[@content-desc="More options"]`,
+        `//*[@content-desc="More"]`,
+        `android=new UiSelector().descriptionContains("More options")`
+    ]) {
+        try {
+            const el = await $(sel)
+            if (await el.isDisplayed().catch(() => false)) {
+                await el.click()
+                await driver.pause(1500)
+                break
+            }
+        } catch (e) { /* try next */ }
+    }
+
+    // Tap Delete
+    for (const sel of [
+        `//*[@text="Delete"]`,
+        `//*[@content-desc="Delete"]`,
+        `android=new UiSelector().text("Delete")`,
+        `android=new UiSelector().descriptionContains("Delete")`
+    ]) {
+        try {
+            const el = await $(sel)
+            if (await el.isDisplayed().catch(() => false)) {
+                await el.click()
+                await driver.pause(1500)
+                break
+            }
+        } catch (e) { /* try next */ }
+    }
+
+    // Confirm deletion dialog
+    for (const sel of [
+        `//*[@text="OK"]`,
+        `//*[@text="Delete"]`,
+        `//*[@text="Yes"]`,
+        `//*[@text="Delete event"]`,
+        `android=new UiSelector().text("Delete")`
+    ]) {
+        try {
+            const el = await $(sel)
+            if (await el.isDisplayed().catch(() => false)) {
+                await el.click()
+                await driver.pause(1500)
+                console.log('Event deleted successfully')
+                break
+            }
+        } catch (e) { /* try next */ }
+    }
+
+    await startActivity()
+    await driver.pause(3000)
+    console.log('--- Calendar Event Deletion Complete ---')
+}
+
 describe('GolfLoverz Native Application Test', () => {
     before(async () => {
         console.log('--- Setup: Launching app and logging in ---')
@@ -740,13 +938,16 @@ describe('GolfLoverz Native Application Test', () => {
     })
 
     after(async () => {
-        console.log('--- Teardown: Verifying Registered Tournaments and logging out ---')
+        console.log('--- Teardown: Logging out and cleaning up ---')
 
         await startActivity()
         await driver.pause(3000)
 
         console.log('Executing logout flow...')
         await logout()
+
+        console.log('Deleting calendar event...')
+        await deleteCalendarEvent(regData.tournamentName)
 
         console.log('Test suite completed successfully!')
     })
