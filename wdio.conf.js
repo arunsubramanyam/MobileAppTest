@@ -53,10 +53,9 @@ export const config = {
     user: process.env.BROWSERSTACK_USERNAME,
     key: process.env.BROWSERSTACK_ACCESS_KEY,
 
-    hostname: 'hub.browserstack.com',
-    port: 443,
-    protocol: 'https',
-    path: '/wd/hub',
+    hostname: 'localhost',
+    port: 4723,
+    protocol: 'http',
 
     //
     // If you have trouble getting all important capabilities together, check out the
@@ -66,25 +65,11 @@ export const config = {
     capabilities: [{
       platformName: 'Android',
     'appium:automationName': 'UiAutomator2',
-    'appium:appPackage': 'com.google.android.contacts',
-    'appium:appActivity': 'com.google.android.contacts.activities.PeopleActivity',
-    'appium:appWaitActivity': 'com.google.android.contacts.*',
+    'appium:deviceName': 'emulator-5554',
+    'appium:appPackage': 'com.golfloverz.app',
+    'appium:appActivity': 'com.golfloverz.app.MainActivity',
     'appium:noReset': true,
-    'appium:app': undefined,
-    
-    'bstack:options': {
-        deviceName: 'Google Pixel 6',
-        osVersion: '12.0',
-        realMobile: 'true',
-        projectName: 'System App Automation',
-        buildName: 'Contacts app tests',
-        sessionName: 'Contacts',
-        debug: true,
-        networkLogs: true
-
-    }
-
-
+    'appium:disableWindowAnimation': true
 
 }],
 
@@ -136,8 +121,8 @@ export const config = {
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
     services: [
-    ['@wdio/browserstack-service', {
-        browserstackLocal: false
+    ['appium', {
+        args: { allowCors: true }
     }]
     ],
 
@@ -168,7 +153,7 @@ export const config = {
     // See the full list at http://mochajs.org/
     mochaOpts: {
         ui: 'bdd',
-        timeout: 120000
+        timeout: 600000
     },
 
     //
